@@ -7,8 +7,8 @@ replicaCount: 2
 image:
   repository: eazytraining/frontend
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.0.0"
+  # Overrides the image tag: 1
+  tag: 1
 
 imagePullSecrets: []
 nameOverride: ""
