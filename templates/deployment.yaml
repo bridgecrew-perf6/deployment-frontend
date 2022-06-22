@@ -1,51 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.label.app }}
   namespace: {{ .Values.namespace }}
+  name: {{ .Values.label.app }}
   labels:
     app: {{ .Values.label.app }}
     tier: {{ .Values.label.tier }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       app: {{ .Values.label.app }}
-      tier: {{ .Values.label.tier }}
+      tier: {{ .Values.label.app }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
         app: {{ .Values.label.app }}
-        tier: {{ .Values.label.tier }}
+        tier: {{ .Values.label.app }}
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          env:
-          - name: http_proxy
-            value: 127.0.0.1:30101
-        - name: mesherfrontend
-          image: thanda/mesher:osi
-          env:
-          - name: CSE_REGISTRY_ADDR
-            value : http://servicecenter:30100
-          - name: SERVICE_NAME
-            value: frontend
-          - name: VERSION
-            value: 0.0.1
-          - name: APP_ID
-            value: OSIConference
-          ports:
-          - containerPort: 80
-          
-          
+      - name: {{ .Values.label.app }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        env:
+        - name: http_proxy
+          value: 127.0.0.1:30101
+      - name: {{ .Values.label.name }}
+        image: thanda/mesher:osi
+        env:
+        - name: CSE_REGISTRY_ADDR
+          value : http://servicecenter:30100
+        - name: SERVICE_NAME
+          value: {{ .Values.label.app }}
+        - name: VERSION
+          value: 0.0.1
+        - name: APP_ID
+          value: OSIConference
+        ports:
+        - containerPort: 80
